@@ -46,15 +46,15 @@ class Planet
 	end
 
 	def calc_velocity
-		@x_vel += @x_accel * 50000
-		@y_vel += @y_accel * 50000
+		@x_vel += @x_accel * 100000
+		@y_vel += @y_accel * 100000
 	end
 
 	def calc_position
-		@x_pos += @x_vel * 50000
-		@y_pos += @y_vel * 50000
+		@x_pos += @x_vel * 100000
+		@y_pos += @y_vel * 100000
 		@x_relative = scale(@x_pos)
-		@y_relative = scale(@y_pos)
+		@y_relative = scale(@y_pos*-1)
 	end
 
 	private
