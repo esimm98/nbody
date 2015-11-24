@@ -4,25 +4,24 @@ require 'gosu'
 
 class SimWindow < Gosu::Window
 
+	attr_accessor :window_size, :diameter
+
 	def initialize
-		@width = 1000
-		@height = 600
-		super @width, @height
+		@window_size = 600
+		super @window_size, @window_size
 		self.caption = "Planet Orbit Sim"
 		@background = Gosu::Image.new("images/space.jpg")
-		@planets = []
+		@bodies = []
 		@line = 0
-		@system_size = 0
+		@diameter = 0
 
-		file = File.read("Planets.txt")
+		file = File.read("simulations/planets.txt")
 		file.each_line do |line|
 			arr = line.split(' ')
 			if @line == 1
-				@system_size = arr[0].to_f*2
+				@diameter = arr[0].to_f * 2
 			elsif @line >= 2
-				arr[0] = arr[0].to_f/@system_size*@width + @width/2
-				arr[1] = arr[1].to_f/@system_size*@height + @height/2
-				@planets.push << Planet.new(arr[0], arr[1], arr[2].to_f, arr[3].to_f, arr[4].to_f, arr[5])
+				@bodies.push << Planet.new(arr[0].to_f, arr[1].to_f, arr[2].to_f, arr[3].to_f, arr[4].to_f, arr[5], self)
 			end
 			@line += 1
 		end
@@ -30,7 +29,20 @@ class SimWindow < Gosu::Window
 
 	def draw
 		@background.draw(0, 0, ZOrder::Background)
-		@planets.each { |planet| planet.draw }
+		@bodies.each { |body| body.draw }
+	end
+
+	def update
+		@bodies.each do |i|
+			@bodies.each do |j|
+				if i != j
+					i.calc_gravity(j)
+				end
+			end
+			i.calc_acceleration
+			i.calc_velocity
+			i.calc_position
+		end
 	end
 
 	def button_down(id)
@@ -38,5 +50,5 @@ class SimWindow < Gosu::Window
 	end
 end
 
-window = SimWindow.new
-window.show
+system = SimWindow.new
+system.show
